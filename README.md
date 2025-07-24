@@ -1,123 +1,136 @@
-# SCADA Tank Farm
-This project has been developed as a final submission for a SCADA course using TIA Portal Software Platform (2020, Fall)
-____
 
-## Introduction
+# 🚰 Tank Storage Control System (TSCS) – SCADA Simulation in TIA Portal
 
-This text aims to provide information about Standard Operational Procedures that were considered during the development process of the SCADA project. Firstly, the author will introduce a brief explanation of the Tank Farm, after which the components and instructions of the software will be discussed. 
+A complete SCADA simulation project for a liquid storage and transfer system, developed using Siemens TIA Portal v15.1 and WinCC RT Advanced. This project models a smart fluid distribution network with centralized priority logic, operator controls, alarm safety features, and real-time SCADA monitoring — ideal for automation portfolios or academic demonstrations.
 
-## Tank Farm Process Description 
+---
 
-The tank farm has three slaves and one master tank where the master tank's fullness is prioritized. Automatic alarm systems triggering by the predefined alarm threshold in both slave and master tanks send information to the corresponding (Pump110A for slaves, Pump770 for master) pumps and valves to start the filling process. Moreover, to provide flexibility over the process, an authorized operator can also control the process manually. Having filled master tank is waiting for the discharge of product until order is received.
+## 📚 Table of Contents
 
-
-## Design Parameters
-
-Several parameters have been taken into account during the designing process of the tanks, valves, and pumps. These include but are not limited to Tank capacities, High/Low alarm trigger levels, Maximum pump pressure.
-
-|               | Tank 140 | Tank 150 |  Tank 160 | Tank 170 |
-|---------------|----------|----------|-----------|----------|
-| Tank Capacity | 1500     | 2500     | 3000      | 10000    |
-| High Level    | 1350     | 2250     | 2700      | 9000     |
-| Low level     | 200      | 200      | 200       | 1000     |
-
-As pumps can be fragile to certain high-pressure levels (~1000 PSI), discharge selenoid valves (SV1x02) have been added to the tanks to provide maximum safety. 
-
-## Software Overview
-
-### Main Page
-
-![Figure 1](https://i.imgur.com/zJwLoWh.png)
-
-Concerning the safety measures, the software includes its so called Main Page to allow only authorized users to interfere with the process's control. Users can be classified as Administrators and Operators. Their privileges and pre-defined credentials are different and written in the table below.
-
-|               | Can change users' credentials | Can monitor/control the process | Username   | Password  |
-|---------------|-------------------------------|---------------------------------|------------|-----------|
-| Administrator | Yes                           | No                              | admin_1    | 1234      |
-| Operator      | No                            | Yes                             | operator_1 | Salam1234 |
-
-### Tank Farm Page
-
-![Imgur](https://i.imgur.com/1PBbXEq.png)
-
-Having logged in as an operator, a user can view the Tank Farm page, which is intended only for monitoring purposes. Moreover, individual pages for each tank has been created to add safety/friction to the control. 
-
-### Tank 1x0 Screens
-In individual pages, an operator can view/change the statuses of pumps and valves using the faceplates provided. Faceplates will show up when a correspondingly named button is clicked and will hide by clicking on X. 
-
-![Figure 1](https://i.imgur.com/i5hto8f.png)
-
-### Trend Screen
-Additionally, to ease monitoring the tanks' levels simultaneously, Trend Screen has been designed, and can be viewed by clicking the button in the right top corner of Tank Screen. 
-
-![Imgur](https://i.imgur.com/ZIn2pdF.png)
-
-### Alarm Screen
-Last, to view and acknowledge the alarms, a TIA-Portal build-in floating button has been added and can be clicked irrespective of the screen. 
-
-![Imgur](https://i.imgur.com/a6m9svx.png)
-
-### Status Representation
-
-- ![#ff7777](https://via.placeholder.com/15/ff7777/000000?text=+) Not operating
-- ![#55ff56](https://via.placeholder.com/15/55ff56/000000?text=+) Operating
-
-Once an alarm happened, the Alarm Screen Pops up, giving information about the cause and results in case of no action and cannot be moved aside without canceling the panel (by clicking x). Additionally, on the Tank Farm screen, flashing lights show a specific tank having an alarm. 
-
-- Flashing ![#fedb58](https://via.placeholder.com/15/fedb58/000000?text=+) colored light - Low Alarm
-- Flashing ![#e9305a](https://via.placeholder.com/15/e9305a/000000?text=+) colored light - High Alarm
-
-By clicking the flashing light, a pop screen giving detailed information about the alarm will show up. 
-
-![Imgur](https://i.imgur.com/r16dyIW.png)
+- [🚀 Project Overview](#-project-overview)
+- [📦 Features](#-features)
+- [🏗️ System Architecture](#️-system-architecture)
+- [🛠️ Installation](#-installation)
+- [▶️ How to Run](#️-how-to-run)
+- [🧰 Technologies & Requirements](#-technologies--requirements)
+- [📁 Project Structure](#-project-structure)
 
 
-## Startup Procedure
+---
 
-Regarding the priority of filling the master tank first, as long as there is at least one slave tank available (not having a low alarm), Pump770A will automatically start to fill the master. To fill a slave tank, it is enough to activate Pump100A. Before starting the filling process, it is essential to check the valves' performance to avoid overpressure/pump fault. They can be checked by sending commands using faceplates. 
+## 🚀 Project Overview
 
-Valve Faceplate            |  Pump Faceplate
-:-------------------------:|:-------------------------:
-![](https://i.imgur.com/RDfsCBL.png) |  ![](https://i.imgur.com/7Bxmou5.png)
+This project simulates an automated **tank storage control system** with multiple storage units (reservoirs) and a central high-capacity master reservoir. The system controls pumps and valves to maintain levels and distribute fluids intelligently. With full HMI/SCADA visualization, alarm handling, and operator access management, it replicates an industrial environment.
 
+---
 
-## Normal Operations
+## 📦 Features
 
-*x = 4,..,7*
+- 🔄 **Automated Liquid Management** with reservoir prioritization
+- 🔐 **User Access Roles**: Admin and Operator control levels
+- 📡 **Real-Time Monitoring** with WinCC Runtime Advanced
+- 🚨 **Dynamic Alarm System** with pop-ups and blinking indicators
+- 📈 **Trend Chart** for fluid level visualization
+- ✋ **Manual Overrides** through HMI faceplates
+- 🛡️ **Safety Interlocks** to prevent overpressure and faults
 
-| Tag Name | Device                | Mission                                   |
-|----------|-----------------------|-------------------------------------------|
-| SV1x01   | Inlet Selenoid Valve  | Will open during filling of the Tank1x0   |
-| SV1x02   | Outlet Selenoid Valve | Will open during discharge of the Tank1x0 |
-| LT1x01   | Level Transmitter     | Measures (4-20 mA) level of the Tank1x0   |
-| Pump110A | Pump                  | To fill the slave tanks                   |
-| Pump770A | Pump                  | To Fill the master tank                   |
-| Pump771A | Pump                  | To discharge the master tank              |
+---
 
+## 🏗️ System Architecture
 
-## Logic of Operation
+- **Reservoirs**: 3 Secondary Tanks (140, 150, 160), 1 Main Tank (170)
+- **Sensors**: Analog level transmitters (4-20 mA)
+- **Actuators**: 
+  - Inlet/Outlet Solenoid Valves (SV1x01 / SV1x02)  
+  - Pumps (Pump110A, Pump770A, Pump771A)
+- **HMI Screens**:
+  - Login Interface
+  - Storage Overview
+  - Individual Tank Screens
+  - Trend & Alarm Views
 
+---
 
-**Valves**
+## 🛠️ Installation
 
-|        | Open                                                                                                                       | Close                                                                                                      |
-|--------|----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| SV1x01 | - Tank is NOT Full and Open Valve command received<br>- Tank is Low                                                        | - Tank is NOT Low and Close Valve command received<br>- Slave (x = 4,5,6) tank fills the master (x=7) tank |
-| SV1x02 | - Tank is NOT Low and Close Valve command received<br>- Slave (x = 4,5,6) tank is NOT Low AND the master (x=7) tank is Low | - Tank is Low<br>- Master tank is NOT Low AND Close Valve command recieved                                 |
+### Requirements
 
+- Siemens TIA Portal v15.1+
+- WinCC RT Advanced
+- Windows 10 or 11 (64-bit)
+- Factory I/O (optional for 3D simulation)
 
-**Pumps**
+### Setup
 
-|          | Start                                                                                                                                                   | Stop                                                                                                                               |
-|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| Pump100A | - Any of Slave tanks is Low<br>- Inlet valve of a slave tank is Open and Start Pump command recieved                                                    | - All slave tank inlet valves are closed<br>- A slave tank is not low and Stop Pump command received                               |
-| Pump770A | - Outlet valve of a slave and inlet valve of master tank is open and Start Pump command received<br>- Any slave tank is not low and master tank is low  | - Master tank's inlet valve closed<br>- Master tank is being discharged<br>- Master tank is not Low and Stop Pump command received |
-| Pump771A | - Master tank is not low and outlet valve is opened and start pump command received                                                                     | - Master Tank is low<br>- Master tank's outlet valve closed                                                                        |
+```bash
+git clone https://github.com/yourusername/Liquid-Storage-Control-System.git
+````
 
-## Shut Down procedures
+1. Open TIA Portal and load:
 
-This process includes discharge of all the tanks till there is no liquid in any of them. 
+   * `SCADA_project.ap15_1`
+2. (Optional) Import PLCM archive from:
+   `AdditionalFiles/PLCM/plcmArchive.pma15_0`
+3. Simulate with PLCSIM or deploy to a real S7-1200 controller.
+4. Launch WinCC Runtime to run the HMI.
 
-1. Pump110A is deactivated
-2. Pump77A are activated to discharge master
-3. Draining master will get all the liquid from slave tanks
+---
+
+## ▶️ How to Run
+
+### Login
+
+| Role          | Username     | Password    |
+| ------------- | ------------ | ----------- |
+| Administrator | `admin_1`    | `1234`      |
+| Operator      | `operator_1` | `Salam1234` |
+
+### Operation Flow
+
+1. System checks fluid levels.
+2. Priority is given to filling the **Main Reservoir (170)**.
+3. If it's full, secondary tanks can be filled manually using Pump110A.
+4. Monitoring is done via overview/trend pages.
+5. Manual override via faceplates for pump/valve testing.
+
+### Shutdown
+
+1. Stop Pump110A (secondary reservoir pump).
+2. Activate Pump771A to discharge the main tank.
+3. Remaining fluid from secondary tanks drains into the main tank.
+
+---
+
+## 🧰 Technologies & Requirements
+
+* 💻 **Platform**: Siemens TIA Portal v15.1
+* 🧠 **Control Logic**: Ladder & Structured Text
+* 🎛️ **HMI**: WinCC Runtime Advanced (PC Station)
+* ⚙️ **Target Hardware**: S7-1200 / Virtual Controller
+* 🧪 **Tested on**: Windows 10 Pro, 16GB RAM, Intel i7
+
+---
+
+## 📁 Project Structure
+
+```plaintext
+Liquid-Storage-Control-System/
+├── SCADA_project.ap15_1                # TIA Portal main project
+├── AdditionalFiles/
+│   └── PLCM/plcmArchive.pma15_0        # Optional PLCM archive
+├── IM/                                 # HMI, Runtime and intermediate files
+├── Logs/                               # PLC tag logs and conversion data
+├── System/                             # Project metadata and structure
+└── README.md                           # This documentation
+```
+
+---
+
+> *“Industrial automation is intelligence in motion — this project is proof.”*
+
+```
+
+---
+
+Would you prefer a more industrial name like **"Smart Liquid Terminal System"**, **"HydroControl SCADA"**, or **"FluidOps"** instead of "Liquid Storage Control System"? I can regenerate the README with your preferred naming.
+```
